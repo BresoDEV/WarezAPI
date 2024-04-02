@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WarezAPI</title>
+</head>
+<style>
+    html {
+        background-color: #333;
+    }
+
+    p {
+        color: aliceblue;
+        margin: 0;
+    }
+
+    iframe {
+        width: 90%;
+        height: 500px;
+        border: 1px solid greenyellow;
+    }
+
+    button {
+        width: 50%;
+        background-color: rgb(26, 155, 97);
+        color: aliceblue;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    input,
+    select {
+        width: 50%;
+        background-color: rgb(255, 255, 255);
+        color: rgb(0, 0, 0);
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    i ,h2{
+        color: chartreuse;
+    }
+</style>
+
+<body>
+    <center>
+        <div id="div">
+            <p><b>Como usar:</b></p>
+            <p>1: Entre no site do IMDB</p>
+            <p>2: Na busca, procure pelo filme que deseja</p>
+            <p>3: Na pagina principal do filme, copie o link completo ou somente o ID (ambos vão funcionar</p>
+            <p>Ex de link completo: <br><i>https://imdb.com/title/tt218072222</i></p>
+            <p>Ex do ID: <br>https://imdb.com/title/<i>tt218072222</i></p>
+            <p>4: Cole o link no campo abaixo</p>
+            <p>5: Clique em Buscar e aguarde</p>
+            <p>6: O player do filme sera exibido logo abaixo</p>
+        </div>
+        <br>
+        <input type="text" name="" id="id" placeholder="Link do filme no IMDB"><br><br>
+        <button id="Buscar">Buscar</button><br>
+
+        <hr>
+        <br>
+        <input style="display:none;" type="text" name="" id="idSalvar" placeholder="Nome do Filme Atual"><br>
+        <button style="display:none;" id="Salvar">Salvar na sua Biblioteca</button><br>
+
+        <br>
+        <iframe style="display:none;" src="" frameborder="0" id="iframe"></iframe>
+
+
+    </center>
+</body>
+<script>
+
+    //localStorage.getItem('idWarez_0')
+    //localStorage.getItem('NomeWarez_0')
+
+    
+    const Buscar = document.getElementById('Buscar');
+    const id = document.getElementById('id');
+    const iframe = document.getElementById('iframe');
+
+    const div = document.getElementById('div');
+    const idSalvar = document.getElementById('idSalvar');
+    const Salvar = document.getElementById('Salvar');
+
+    if (localStorage.getItem('idWarez_0')) {
+         
+        var final = ''
+
+        final +='<center><h2>Biblioteca:</h2><select name="" id="biblio">';
+
+        for (let index = 0; index < 1000; index++) {
+            if (localStorage.getItem('idWarez_' + index)) {
+            
+                final += `
+        
+            <option value="${localStorage.getItem('idWarez_' + index)}">${localStorage.getItem('NomeWarez_' + index)}</option>
+        
+                `;
+            }
+        }
+
+        
+        final +='</select><br><button id="Abrir">Abrir</button><br><button id="Reiniciar">Zerar Biblioteca</button></center><br><hr>';
+        div.innerHTML = final;
+    }
+
+    if(document.getElementById('Abrir'))
+    {
+        document.getElementById('Abrir').addEventListener('click', () => {
+            var filme = document.getElementById('biblio').value;
+            filme = filme.replace('https://imdb.com/title/', '')
+            filme = filme.replace('/', '')
+            iframe.src = 'https://embed.warezcdn.com/filme/' + filme;
+            console.log(filme);
+            iframe.style.display = 'block';
+ 
+    });
+    }
+if(document.getElementById('Reiniciar'))
+    {
+        document.getElementById('Reiniciar').addEventListener('click', () => {
+            localStorage.clear()
+            window.location.reload();
+    });
+    }
+
+
+
+    Buscar.addEventListener('click', () => {
+        if (id.value.includes('tt')) {
+            var filme = id.value;
+            filme = filme.replace('https://imdb.com/title/', '')
+            filme = filme.replace('/', '')
+            iframe.src = 'https://embed.warezcdn.com/filme/' + filme;
+            console.log(filme);
+
+            div.style.display = 'none';
+            idSalvar.style.display = 'block';
+            Salvar.style.display = 'block';
+            iframe.style.display = 'block';
+        }
+    });
+
+
+    Salvar.addEventListener('click', () => {
+        if (id.value.includes('tt')) {
+            var filme = id.value;
+            var Nomefilme = idSalvar.value;
+
+            for (let index = 0; index < 1000; index++) {
+                if (!localStorage.getItem('idWarez_' + index)) {
+                    localStorage.setItem('idWarez_' + index, filme);
+                    localStorage.setItem('NomeWarez_' + index, Nomefilme);
+                    break;
+                }
+            }
+            window.location.reload();
+        }
+    });
+
+
+</script>
+
+</html>
